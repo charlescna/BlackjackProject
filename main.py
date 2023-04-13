@@ -1,7 +1,8 @@
 
 
 def display_message():
-    print("Blackjack Project")
+    print("BLACKJACK")
+    print("Blackjack payout is 3:2")
 
 
 def Display_Card(card):
