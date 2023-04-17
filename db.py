@@ -9,7 +9,6 @@ def read_money_amount():
     except FileNotFoundError:
         print("File cannot be found!")
         return 100
-
 def write_money_amount(money_amount):
     with open('money.txt', 'w', newline='') as f:
         writer = csv.writer(f)

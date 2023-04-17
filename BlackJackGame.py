@@ -3,7 +3,7 @@ import csv
 import db
 from random import randint
 import random
-
+import sys
 
 
 def card_value(card): # a function to get value of card from suits
@@ -35,24 +35,43 @@ play_money = ''
 
 #play_again = input("Play again? (y/n):  ")
 #while play_again != "n":
-while True:
-    values = ['2', '3', '4', '5', '6', '7', '8', '9', 'JACK', 'KING', 'QUEEN', 'ACE']
+
+while True: # Bring to bring back the user to choose if to play or not
+    values = ['2', '3', '4', '5', '6', '7', '8', '9', 'JACK', 'KING', 'QUEEN', 'ACE'] # card and value it holds
     suits = ['CLUBS', 'DIAMONDS', 'HEARTS', 'SPADES']
-    deck = []
-    with open("money.txt") as file:
-        money_in_file = file.read()
-        print(f"Money: {money_in_file}")
+    deck = [] # deck to store all cards
+    try:
+        with open("money.txt") as file:
+            money_in_file = file.read()
+            print(f"Money: {money_in_file}")
+    except FileNotFoundError:
+        print("File not found.  Closing program")
+        sys.exit(1)
+    except Exception as e:
+        print("unexpected error ", type(e), e)
+        print("Shutting down program")
+        sys.exit(1)
 
     for x in suits: # get all cards and store in deck
         for y in values:
             deck.append(x + ' of ' + y)
+    while True:
+        try:
+            bet_money = int(input("Bet amount: "))      # input to get bet amount from  player
+            if bet_money < 5 or bet_money > 1000:
+                print("Minimum bet is 5 and Maximum bet should be 1000")
+                continue
+            else:
+                break
+        except ValueError:
+            print("Bet amount must be an integer")
+            continue
 
-    bet_money = int(input("Bet amount: "))      # get bet amount from  player
-    print()
+
 
     player_hand = []
     dealer_hand = []
-
+# to get player 3 first cards
     card_one = take_card(deck)
     remove_card(deck, card_one)
     card_two = take_card(deck)
@@ -66,7 +85,7 @@ while True:
     player_value_two = card_value(card_two)
     player_hand_total = player_value_one + player_value_two
 
-    print("DEALER CARDS: ")
+    print("DEALER CARDS: ") # to get dealer's card, hide the other
     print(card_one + "\n" + card_two)
     dealer_hand_one = take_card(deck)
     remove_card(deck, dealer_hand_one)
@@ -89,7 +108,8 @@ while True:
         while player_hand_total < 21 and play_again != "n":
             player_selection = input("Hit or Stand? (hit/stand) : ")
             if player_selection == "hit":
-                new_card_player = take_card(deck)
+
+                new_card_player = take_card(deck) # obtain card from deck and kep adding to player's value
                 remove_card(deck, new_card_player)
                 new_card_value = card_value(new_card_player)
                 player_hand_total += int(new_card_value)
@@ -107,7 +127,7 @@ while True:
                 else:
                     continue
             elif player_selection == "stand":
-                if dealer_hand_total < 17:
+                if dealer_hand_total < 17: # obtain card from deck and kep adding to dealer's value
                     new_card_dealer = take_card(deck)
                     dealer_card_value = take_card(new_card_dealer)
                     print(f"This card is a {new_card_dealer}")
@@ -129,24 +149,22 @@ while True:
                         print(F"MONEY: {total_money}")
                     else:
                         continue
-                elif dealer_hand_total == player_hand_total:
+                elif dealer_hand_total == player_hand_total: # if dealer and player has equal value
                     print("It's a tie!")
-                elif dealer_hand_total < player_hand_total:
+                elif dealer_hand_total < player_hand_total:      #if dealer hand is less value than player hand
                     print(f"YOUR POINTS: {player_hand_total}")
                     print(f"DEALER'S POINTS: {dealer_hand_total}")
                     total_money = total_money + bet_money
                     print("You win!")
                     print(f"MONEY: {total_money}")
-                else:
+                else:                                           # if value of card in dealer's hand is more than value in player's hand
                     print(f"YOUR POINTS: {player_hand_total}")
                     print(f"DEALER'S POINTS {dealer_hand_total}")
                     total_money = total_money - bet_money
                     print("Sorry. you lose")
                     play_again = input("Play again? (y/n):  ")
-                    if play_again.lower() != "y":
+                    if play_again.lower() != "y":                  # if a player wants to play again
                         print("come back soon")
-                    else:
-
                         break
 
 
